@@ -8,6 +8,7 @@ with open('./ttt', 'r') as f:
 macs: dict = {}
 for line in TABLE:
     mac = line[0]
+
     # 2020-01-07 14:03:13
     time_fmt = '%Y-%m-%d %H:%M:%S'
     start_time = datetime.strptime(line[1].strip(), time_fmt)
@@ -20,8 +21,10 @@ for line in TABLE:
         all_times = macs[mac]
         all_times.append(times)
 
+print(len(macs))
+
+# calculated time time near wifi
 for key in macs:
-    print(key)
     all_times = macs[key]
 
     if len(all_times) > 1:
@@ -42,12 +45,18 @@ for key in macs:
         total = (next_t[0] - all_times[i][0]).total_seconds()
         if total < 120:
             if curr_t in calculated_time:
-                calculated_time[curr_t] += total
+                if total == 0:
+                    calculated_time[curr_t] += 60
+                else:
+                    calculated_time[curr_t] += total
             else:
-                calculated_time[curr_t] = 0
+                calculated_time[curr_t] = 60
         else:
             curr_t = all_times[i]
 
+    if len(all_times) > 1:
+        print(key)
     for t in calculated_time:
         times = calculated_time[t]
-        print(('start: %s, duration: %ss' % (t[0], times)))
+        if len(all_times) > 1:
+            print(('start: %s, duration: %ss' % (t[0], times)))
